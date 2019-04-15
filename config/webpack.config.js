@@ -1,0 +1,290 @@
+const autoprefixer = require('autoprefixer');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const paths = require('./paths');
+const stylusLoader = require('stylus-loader');
+const jeetPlugin = require('jeet');
+const rupture = require('rupture');
+const nibPlugin = require('nib');
+const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const safePostCssParser = require('postcss-safe-parser');
+const ManifestPlugin = require('webpack-manifest-plugin');
+const getClientEnvironment = require('./env');
+const publicPath = '';
+const publicUrl = publicPath.slice(0, -1);
+const env = getClientEnvironment(publicUrl);
+
+
+module.exports = (webpackEnv) => {
+    const isEnvDevelopment = webpackEnv === 'development';
+    const isEnvProduction = webpackEnv === 'production';
+
+    const publicPath = isEnvProduction
+        ? '/'
+        : '/';
+
+    return {
+        mode: webpackEnv,
+        devtool: isEnvProduction
+            ? 'source-map'
+            : 'eval',
+        entry: [
+            paths.appIndexJs
+        ],
+        output: {
+            path: paths.appBuild,
+            filename: isEnvProduction
+                ? 'static/js/[name].[contenthash:8].js'
+                : 'static/js/[name].js',
+            chunkFilename: isEnvProduction
+                ? 'static/js/[name].[contenthash:8].bundle.js'
+                : 'static/js/[name].bundle.js',
+            publicPath: publicPath,
+        },
+        resolve: {
+            modules: [
+                paths.appNodeModules,
+                paths.appSrc
+            ],
+            extensions: ['.js', '.json', '.jsx', '.styl'],
+        },
+        module: {
+            strictExportPresence: true,
+            rules: [
+                {parser: {requireEnsure: false}},
+                {
+                    test: /\.jsx?$/,
+                    include: paths.appSrc,
+                    enforce: 'pre',
+                    use: [
+                        {
+                            loader: require.resolve('eslint-loader'),
+                            options: {
+                                baseConfig: {
+                                    extends: [
+                                        require.resolve('./eslintrc.js')
+                                    ],
+                                },
+                                ignore: false,
+                                useEslintrc: false,
+                            }
+                        }
+                    ],
+                },
+                {
+                    test: /\.jsx?$/,
+                    include: paths.appSrc,
+                    use: [
+                        {
+                            loader: require.resolve('babel-loader'),
+                            options: {
+                                babelrc: false,
+                                configFile: require.resolve('./babelrc.js'),
+                                cacheDirectory: true,
+                                cacheCompression: isEnvProduction,
+                                compact: isEnvProduction,
+                            },
+                        }
+                    ]
+                },
+                {
+                    test: /\.jsx?$/,
+                    include: paths.appSrc,
+                    exclude: /@babel(?:\/|\\{1,2})runtime/,
+                    use: [
+                        {
+                            loader: require.resolve('babel-loader'),
+                            options: {
+                                babelrc: false,
+                                configFile: require.resolve('./babelrc.js'),
+                                cacheDirectory: true,
+                                cacheCompression: isEnvProduction,
+                                compact: isEnvProduction,
+                            },
+                        },
+                    ],
+                },
+                {
+                    exclude: [
+                        /\.html$/,
+                        /\.(js|jsx)$/,
+                        /\.css$/,
+                        /\.styl$/,
+                        /\.bmp$/,
+                        /\.json$/,
+                        /\.gif$/,
+                        /\.svg$/,
+                        /\.jpe?g$/,
+                        /\.png$/,
+                        /\.ejs$/
+                    ],
+                    loader: require.resolve('file-loader'),
+                    options: {
+                        name: 'static/media/[name].[hash:8].[ext]'
+                    }
+                },
+                {
+                    test: [/\.gif$/, /\.jpe?g$/, /\.png$/, /\.bg\.svg$/],
+                    loader: require.resolve('url-loader'),
+                    options: {
+                        limit: 10000
+                    }
+                },
+                {
+                    test: /\.svg$/,
+                    exclude: [/\.bg\.svg$/],
+                    use: [
+                        {
+                            loader: require.resolve('babel-loader')
+                        },
+                        {
+                            loader: require.resolve('react-svg-loader'),
+                            options: {
+                                svgo: require('./svgoConfig')
+                            }
+                        }
+                    ]
+                },
+                {
+                    test: /\.(woff(2)?|ttf|eot)$/,
+                    use: [{
+                        loader: require.resolve('file-loader'),
+                        options: {
+                            name: '[name].[ext]',
+                            outputPath: 'static/fonts/'
+                        }
+                    }]
+                },
+                {
+                    test: /\.(styl|css)$/,
+                    use: [
+                        isEnvDevelopment && require.resolve('style-loader'),
+                        isEnvProduction && {
+                            loader: MiniCssExtractPlugin.loader,
+                            options: {},
+                        },
+                        {
+                            loader: require.resolve('css-loader'),
+                            options: {
+                                importLoaders: 1,
+                                sourceMap: true,
+                                modules: true,
+                                localIdentName: '[local]'
+                            }
+                        },
+                        {
+                            loader: require.resolve('postcss-loader'),
+                            options: {
+                                ident: 'postcss',
+                                sourceMap: true,
+                                plugins: () => [
+                                    require('postcss-flexbugs-fixes'),
+                                    autoprefixer({
+                                        browsers: [
+                                            'Chrome >= 52',
+                                            'FireFox >= 44',
+                                            'Safari >= 7',
+                                            'Explorer 11',
+                                            'last 4 Edge versions'
+                                        ],
+                                        flexbox: 'no-2009'
+                                    })
+                                ]
+                            }
+                        },
+                        require.resolve('stylus-loader')
+                    ].filter(Boolean)
+                },
+            ]
+        },
+        plugins: [
+            isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+
+            isEnvProduction && new MiniCssExtractPlugin({
+                filename: 'static/css/[name].[contenthash:8].css',
+                chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+            }),
+
+            new stylusLoader.OptionsPlugin({
+                default: {
+                    use: [jeetPlugin(), rupture(), nibPlugin()],
+                    import: paths.appStylIndex,
+                },
+            }),
+
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+
+            new webpack.DefinePlugin(env.stringified),
+
+            new ManifestPlugin({
+                fileName: 'assets-manifest.json',
+                publicPath: publicPath,
+            }),
+
+            new HtmlWebpackPlugin(
+                Object.assign(
+                    {},
+                    {
+                        inject: true,
+                        template: paths.appHtml,
+                        title: paths.appPackageJson.name,
+                    },
+                    isEnvProduction
+                        ? {
+                            minify: {
+                                removeComments: true,
+                                collapseWhitespace: true,
+                                removeRedundantAttributes: true,
+                                useShortDoctype: true,
+                                removeEmptyAttributes: true,
+                                removeStyleLinkTypeAttributes: true,
+                                keepClosingSlash: true,
+                                minifyJS: true,
+                                minifyCSS: true,
+                                minifyURLs: true,
+                            },
+                        }
+                        : undefined
+                )
+            ),
+        ].filter(Boolean),
+        optimization: {
+            minimize: isEnvProduction,
+            minimizer: [
+                new OptimizeCSSAssetsPlugin({
+                    cssProcessorOptions: {
+                        parser: safePostCssParser,
+                        map: {
+                            inline: false,
+                            annotation: true,
+                        }
+                    },
+                }),
+            ],
+            splitChunks: {
+                chunks: 'async',
+                minSize: 30000,
+                minChunks: 1,
+                maxAsyncRequests: 5,
+                maxInitialRequests: 3,
+                name: true,
+                cacheGroups: {
+                    commons: {
+                        test: /[\\/]node_modules[\\/]/,
+                        name: 'vendors',
+                        chunks: 'all',
+                        enforce: true,
+                        priority: -10,
+                    },
+                    default: {
+                        minChunks: 2,
+                        priority: -20,
+                        reuseExistingChunk: true,
+                        enforce: true,
+                    },
+                }
+            }
+        },
+    }
+};
