@@ -19,6 +19,7 @@ module.exports = {
         'linebreak-style': 0,
         'global-require': 0,
         'eslint linebreak-style': [0, 'error', 'windows'],
-        'indent': ['error', 4, {SwitchCase: 1}]
+        'indent': ['error', 4, {SwitchCase: 1}],
+        'no-underscore-dangle': ['error', { 'allow': ['__REDUX_DEVTOOLS_EXTENSION__'] }],
     },
 };
