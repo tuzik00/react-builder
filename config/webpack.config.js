@@ -52,7 +52,6 @@ module.exports = (webpackEnv) => {
         module: {
             strictExportPresence: true,
             rules: [
-                {parser: {requireEnsure: false}},
                 {
                     test: /\.jsx?$/,
                     include: paths.appSrc,
