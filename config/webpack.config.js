@@ -105,29 +105,12 @@ module.exports = (webpackEnv) => {
                     ],
                 },
                 {
-                    exclude: [
-                        /\.html$/,
-                        /\.(js|jsx)$/,
-                        /\.css$/,
-                        /\.styl$/,
-                        /\.bmp$/,
-                        /\.json$/,
-                        /\.gif$/,
-                        /\.svg$/,
-                        /\.jpe?g$/,
-                        /\.png$/,
-                        /\.ejs$/
-                    ],
-                    loader: require.resolve('file-loader'),
-                    options: {
-                        name: 'static/media/[name].[hash:8].[ext]'
-                    }
-                },
-                {
                     test: [/\.gif$/, /\.jpe?g$/, /\.png$/, /\.bg\.svg$/],
                     loader: require.resolve('url-loader'),
                     options: {
-                        limit: 10000
+                        limit: 10000,
+                        name: '[name].[ext]',
+                        outputPath: 'static/media/'
                     }
                 },
                 {
@@ -140,17 +123,26 @@ module.exports = (webpackEnv) => {
                         {
                             loader: require.resolve('react-svg-loader'),
                             options: {
-                                svgo: require('./svgoConfig')
+                                svgo: require('./svgoConfig'),
+                                name: '[name].[ext]',
+                                outputPath: 'static/media/',
                             }
                         }
                     ]
                 },
                 {
                     test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                    use: require.resolve('url-loader?limit=10000'),
+                    use: [{
+                        loader: require.resolve('url-loader'),
+                        options: {
+                            limit: 10000,
+                            name: '[name].[ext]',
+                            outputPath: 'static/fonts/',
+                        }
+                    }]
                 },
                 {
-                    test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
+                    test: /\.(ttf|eot)(\?[\s\S]+)?$/,
                     use: [{
                         loader: require.resolve('file-loader'),
                         options: {
