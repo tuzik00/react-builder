@@ -146,7 +146,11 @@ module.exports = (webpackEnv) => {
                     ]
                 },
                 {
-                    test: /\.(woff(2)?|ttf|eot)$/,
+                    test: /\.woff2?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+                    use: require.resolve('url-loader?limit=10000'),
+                },
+                {
+                    test: /\.(ttf|eot|svg)(\?[\s\S]+)?$/,
                     use: [{
                         loader: require.resolve('file-loader'),
                         options: {
