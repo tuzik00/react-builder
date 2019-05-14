@@ -54,7 +54,7 @@ module.exports = (webpackEnv) => {
             rules: [
                 {
                     test: /\.jsx?$/,
-                    include: paths.appSrc,
+                    include: [paths.appSrc, paths.appPackages],
                     enforce: 'pre',
                     use: [
                         {
@@ -73,7 +73,7 @@ module.exports = (webpackEnv) => {
                 },
                 {
                     test: /\.jsx?$/,
-                    include: paths.appSrc,
+                    include: [paths.appSrc, paths.appPackages],
                     use: [
                         {
                             loader: require.resolve('babel-loader'),
@@ -89,7 +89,7 @@ module.exports = (webpackEnv) => {
                 },
                 {
                     test: /\.jsx?$/,
-                    include: paths.appSrc,
+                    include: [paths.appSrc, paths.appPackages],
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     use: [
                         {
