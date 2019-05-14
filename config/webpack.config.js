@@ -54,8 +54,7 @@ module.exports = (webpackEnv) => {
             rules: [
                 {
                     test: /\.jsx?$/,
-                    include: [paths.appSrc, paths.appPackages],
-                    exclude: /\.min\.js$/,
+                    include: paths.appSrc,
                     enforce: 'pre',
                     use: [
                         {
