@@ -23,7 +23,7 @@ module.exports = (webpackEnv) => {
     const publicPath = isEnvProduction
         ? '/'
         : '/';
-
+console.log(paths);
     return {
         mode: webpackEnv,
         devtool: isEnvProduction

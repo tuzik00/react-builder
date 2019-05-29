@@ -1,5 +1,6 @@
 {
   "name": "react-builder",
+  "preferGlobal": true,
   "version": "0.1.4",
   "description": "",
   "author": "Demidov Evgeniy",
@@ -7,7 +8,6 @@
   "bin": {
     "react-builder": "./scripts/react-builder.js"
   },
-  "preferGlobal": true,
   "dependencies": {
     "@babel/cli": "7.2.3",
     "@babel/core": "^7.0.1",
