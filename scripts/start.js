@@ -63,11 +63,6 @@ checkBrowsers(paths.appPath, isInteractive)
         const {raw} = getClientEnvironment();
         const config = configFactory(raw.NODE_ENV);
 
-        config.entry.push(
-            `webpack-dev-server/client?${urls.localUrlForBrowser}`,
-            'webpack/hot/only-dev-server'
-        );
-
         config.resolve.alias = {
             'react-dom': '@hot-loader/react-dom'
         };

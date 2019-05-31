@@ -23,15 +23,16 @@ module.exports = (webpackEnv) => {
     const publicPath = isEnvProduction
         ? '/'
         : '/';
-console.log(paths);
+
     return {
         mode: webpackEnv,
         devtool: isEnvProduction
             ? 'source-map'
             : 'eval',
         entry: [
-            paths.appIndexJs
-        ],
+            isEnvDevelopment && require.resolve('react-dev-utils/webpackHotDevClient'),
+            paths.appIndexJs,
+        ].filter(Boolean),
         output: {
             path: paths.appBuild,
             filename: isEnvProduction
@@ -44,6 +45,7 @@ console.log(paths);
         },
         resolve: {
             modules: [
+                'node_modules',
                 paths.appNodeModules,
                 paths.appSrc
             ],
