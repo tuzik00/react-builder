@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const paths = require('./paths');
+const fs = require('fs')
 const stylusLoader = require('stylus-loader');
 const jeetPlugin = require('jeet');
 const rupture = require('rupture');
@@ -19,6 +20,7 @@ const env = getClientEnvironment(publicUrl);
 module.exports = (webpackEnv) => {
     const isEnvDevelopment = webpackEnv === 'development';
     const isEnvProduction = webpackEnv === 'production';
+    const hasIndexHtml = fs.existsSync(paths.appHtml);
 
     const publicPath = isEnvProduction
         ? '/'
@@ -56,7 +58,10 @@ module.exports = (webpackEnv) => {
             rules: [
                 {
                     test: /\.jsx?$/,
-                    include: paths.appSrc,
+                    include: [
+                        paths.appSrc,
+                        paths.appStorybook,
+                    ],
                     enforce: 'pre',
                     use: [
                         {
@@ -75,7 +80,11 @@ module.exports = (webpackEnv) => {
                 },
                 {
                     test: /\.jsx?$/,
-                    include: [paths.appSrc, paths.appPackages],
+                    include: [
+                        paths.appSrc,
+                        paths.appPackages,
+                        paths.appStorybook,
+                    ],
                     use: [
                         {
                             loader: require.resolve('babel-loader'),
@@ -91,7 +100,11 @@ module.exports = (webpackEnv) => {
                 },
                 {
                     test: /\.jsx?$/,
-                    include: [paths.appSrc, paths.appPackages],
+                    include: [
+                        paths.appSrc,
+                        paths.appPackages,
+                        paths.appStorybook,
+                    ],
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     use: [
                         {
@@ -190,7 +203,15 @@ module.exports = (webpackEnv) => {
                                 ]
                             }
                         },
-                        require.resolve('stylus-loader')
+                        {
+                            loader: require.resolve("stylus-loader"),
+                            options: {
+                                use: [jeetPlugin(), rupture(), nibPlugin()],
+                                import: paths.appStylIndex,
+                                resolveUrl: true,
+                                sourceMap: true
+                            }
+                        }
                     ].filter(Boolean)
                 },
             ]
@@ -203,13 +224,6 @@ module.exports = (webpackEnv) => {
                 chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
             }),
 
-            new stylusLoader.OptionsPlugin({
-                default: {
-                    use: [jeetPlugin(), rupture(), nibPlugin()],
-                    import: paths.appStylIndex,
-                },
-            }),
-
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 
             new webpack.DefinePlugin(env.stringified),
@@ -219,7 +233,7 @@ module.exports = (webpackEnv) => {
                 publicPath: publicPath,
             }),
 
-            new HtmlWebpackPlugin(
+            hasIndexHtml && new HtmlWebpackPlugin(
                 Object.assign(
                     {},
                     {
