@@ -47,6 +47,7 @@ module.exports = (webpackEnv) => {
         },
         resolve: {
             modules: [
+                'node_modules',
                 paths.appNodeModules,
                 paths.appSrc
             ],
