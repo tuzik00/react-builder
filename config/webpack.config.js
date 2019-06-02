@@ -47,7 +47,6 @@ module.exports = (webpackEnv) => {
         },
         resolve: {
             modules: [
-                'node_modules',
                 paths.appNodeModules,
                 paths.appSrc
             ],
@@ -60,7 +59,6 @@ module.exports = (webpackEnv) => {
                     test: /\.jsx?$/,
                     include: [
                         paths.appSrc,
-                        paths.appStorybook,
                     ],
                     enforce: 'pre',
                     use: [
@@ -83,7 +81,6 @@ module.exports = (webpackEnv) => {
                     include: [
                         paths.appSrc,
                         paths.appPackages,
-                        paths.appStorybook,
                     ],
                     use: [
                         {
@@ -103,7 +100,6 @@ module.exports = (webpackEnv) => {
                     include: [
                         paths.appSrc,
                         paths.appPackages,
-                        paths.appStorybook,
                     ],
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
                     use: [
