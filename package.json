@@ -6,7 +6,7 @@
   "author": "Demidov Evgeniy",
   "license": "MIT",
   "bin": {
-    "react-builder": "./scripts/react-builder.js"
+    "react-builder": "scripts/react-builder.js"
   },
   "dependencies": {
     "@babel/cli": "7.2.3",
@@ -68,6 +68,7 @@
     "webpack-dev-server": "~3.2.1",
     "webpack-hot-middleware": "^2.24.3",
     "webpack-manifest-plugin": "^2.0.4",
-    "whatwg-fetch": "^3.0.0"
+    "whatwg-fetch": "^3.0.0",
+    "workbox-webpack-plugin": "^4.3.1"
   }
 }

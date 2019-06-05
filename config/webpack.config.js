@@ -15,16 +15,18 @@ const getClientEnvironment = require('./env');
 const publicPath = '';
 const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 
 module.exports = (webpackEnv) => {
     const isEnvDevelopment = webpackEnv === 'development';
     const isEnvProduction = webpackEnv === 'production';
-    const hasIndexHtml = fs.existsSync(paths.appHtml);
-
+    const hasSW = fs.existsSync(paths.appSW);
     const publicPath = isEnvProduction
         ? '/'
         : '/';
+
+    const appConfigJson = require(paths.appConfigJson);
 
     return {
         mode: webpackEnv,
@@ -230,32 +232,35 @@ module.exports = (webpackEnv) => {
                 publicPath: publicPath,
             }),
 
-            hasIndexHtml && new HtmlWebpackPlugin(
-                Object.assign(
-                    {},
-                    {
-                        inject: true,
-                        template: paths.appHtml,
-                        title: paths.appPackageJson.name,
-                    },
-                    isEnvProduction
-                        ? {
-                            minify: {
-                                removeComments: true,
-                                collapseWhitespace: true,
-                                removeRedundantAttributes: true,
-                                useShortDoctype: true,
-                                removeEmptyAttributes: true,
-                                removeStyleLinkTypeAttributes: true,
-                                keepClosingSlash: true,
-                                minifyJS: true,
-                                minifyCSS: true,
-                                minifyURLs: true,
-                            },
-                        }
-                        : undefined
-                )
-            ),
+            hasSW && new WorkboxPlugin.InjectManifest({
+                swSrc: paths.appSW,
+            }),
+
+            ...(appConfigJson.html || [])
+                .map((htmlConfig) => new HtmlWebpackPlugin(
+                    Object.assign(
+                        {
+                            template: paths.resolveApp(htmlConfig.template),
+                            ...htmlConfig,
+                        },
+                        isEnvProduction
+                            ? {
+                                minify: {
+                                    removeComments: true,
+                                    collapseWhitespace: true,
+                                    removeRedundantAttributes: true,
+                                    useShortDoctype: true,
+                                    removeEmptyAttributes: true,
+                                    removeStyleLinkTypeAttributes: true,
+                                    keepClosingSlash: true,
+                                    minifyJS: true,
+                                    minifyCSS: true,
+                                    minifyURLs: true,
+                                },
+                            }
+                            : undefined
+                    )
+                ))
         ].filter(Boolean),
         optimization: {
             minimize: isEnvProduction,

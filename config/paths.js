@@ -5,6 +5,7 @@ const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 
 module.exports = {
+	resolveApp: resolveApp,
 	appPath: resolveApp('.'),
 	appPackages: resolveApp('../../packages'),
 	appNodeModules: resolveApp('node_modules'),
@@ -12,6 +13,7 @@ module.exports = {
 	appBuild: resolveApp('dist'),
 	appPackageJson: resolveApp('package.json'),
 	appIndexJs: resolveApp('src/index.js'),
-    appHtml: resolveApp('src/index.html'),
+	appConfigJson: resolveApp('react-builder.json'),
+	appSW: resolveApp('src/service-worker.js'),
 	appStylIndex: resolveApp('src/style/index.styl'),
 };

@@ -49,7 +49,7 @@ checkBrowsers(paths.appPath, isInteractive)
             return;
         }
 
-        const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
+        const protocol = 'http';
         const appName = require(paths.appPackageJson).name;
         const urls = prepareUrls(protocol, HOST, port);
 
@@ -77,7 +77,12 @@ checkBrowsers(paths.appPath, isInteractive)
 
         const proxySetting = require(paths.appPackageJson).proxy;
         const proxyConfig = prepareProxy(proxySetting, paths.appBuild);
-        const serverConfig = createDevServerConfig(proxyConfig, urls.lanUrlForConfig);
+        const serverConfig = createDevServerConfig({
+            protocol,
+            host: HOST,
+            proxy: proxyConfig,
+            allowedHost: urls.lanUrlForConfig
+        });
         const devServer = new WebpackDevServer(compiler, serverConfig);
 
         devServer.listen(port, HOST, err => {
