@@ -4,7 +4,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const paths = require('./paths');
 const fs = require('fs')
-const stylusLoader = require('stylus-loader');
 const jeetPlugin = require('jeet');
 const rupture = require('rupture');
 const nibPlugin = require('nib');
@@ -16,6 +15,8 @@ const publicPath = '';
 const publicUrl = publicPath.slice(0, -1);
 const env = getClientEnvironment(publicUrl);
 const WorkboxPlugin = require('workbox-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
 
 
 module.exports = (webpackEnv) => {
@@ -26,7 +27,9 @@ module.exports = (webpackEnv) => {
         ? '/'
         : '/';
 
-    const appConfigJson = require(paths.appConfigJson);
+    const appConfigJs = fs.existsSync(paths.appConfigJs)
+        ? require(paths.appConfigJs)
+        : require('./react-builder.config');
 
     return {
         mode: webpackEnv,
@@ -227,6 +230,8 @@ module.exports = (webpackEnv) => {
 
             new webpack.DefinePlugin(env.stringified),
 
+            new CopyPlugin(appConfigJs.copy),
+
             new ManifestPlugin({
                 fileName: 'assets-manifest.json',
                 publicPath: publicPath,
@@ -236,7 +241,9 @@ module.exports = (webpackEnv) => {
                 swSrc: paths.appSW,
             }),
 
-            ...(appConfigJson.html || [])
+            appConfigJs.manifestJson && new WebpackPwaManifest(appConfigJs.manifestJson),
+
+            ...(appConfigJs.html || [])
                 .map((htmlConfig) => new HtmlWebpackPlugin(
                     Object.assign(
                         {

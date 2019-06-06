@@ -26,6 +26,7 @@
     "base64-inline-loader": "~1.1.1",
     "browser-sync": "^2.26.3",
     "chalk": "^2.4.2",
+    "copy-webpack-plugin": "^5.0.3",
     "css-loader": "~2.1.1",
     "dotenv": "~6.0.0",
     "eslint": "~4.19.1",
@@ -68,6 +69,7 @@
     "webpack-dev-server": "~3.2.1",
     "webpack-hot-middleware": "^2.24.3",
     "webpack-manifest-plugin": "^2.0.4",
+    "webpack-pwa-manifest": "^4.0.0",
     "whatwg-fetch": "^3.0.0",
     "workbox-webpack-plugin": "^4.3.1"
   }

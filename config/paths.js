@@ -13,7 +13,7 @@ module.exports = {
 	appBuild: resolveApp('dist'),
 	appPackageJson: resolveApp('package.json'),
 	appIndexJs: resolveApp('src/index.js'),
-	appConfigJson: resolveApp('react-builder.json'),
+	appConfigJs: resolveApp('react-builder.config.js'),
 	appSW: resolveApp('src/service-worker.js'),
 	appStylIndex: resolveApp('src/style/index.styl'),
 };

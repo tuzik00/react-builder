@@ -49,7 +49,7 @@ checkBrowsers(paths.appPath, isInteractive)
             return;
         }
 
-        const protocol = 'http';
+        const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
         const appName = require(paths.appPackageJson).name;
         const urls = prepareUrls(protocol, HOST, port);
 
