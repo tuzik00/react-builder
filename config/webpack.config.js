@@ -245,10 +245,6 @@ module.exports = (webpackEnv) => {
                     )
                 )),
 
-            hasSW && new WorkboxPlugin.InjectManifest({
-                swSrc: paths.appSW,
-            }),
-
             isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
 
             isEnvProduction && new MiniCssExtractPlugin({
@@ -270,6 +266,10 @@ module.exports = (webpackEnv) => {
             appConfigJs.manifestJson && new WebpackPwaManifest(
                 appConfigJs.manifestJson
             ),
+
+            hasSW && new WorkboxPlugin.InjectManifest({
+                swSrc: paths.appSW,
+            }),
         ].filter(Boolean),
         optimization: {
             minimize: isEnvProduction,
