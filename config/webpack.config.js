@@ -219,31 +219,7 @@ module.exports = (webpackEnv) => {
             ]
         },
         plugins: [
-            isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
-
-            isEnvProduction && new MiniCssExtractPlugin({
-                filename: 'static/css/[name].[contenthash:8].css',
-                chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
-            }),
-
-            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-
-            new webpack.DefinePlugin(env.stringified),
-
-            new CopyPlugin(appConfigJs.copy),
-
-            new ManifestPlugin({
-                fileName: 'assets-manifest.json',
-                publicPath: publicPath,
-            }),
-
-            hasSW && new WorkboxPlugin.InjectManifest({
-                swSrc: paths.appSW,
-            }),
-
-            appConfigJs.manifestJson && new WebpackPwaManifest(appConfigJs.manifestJson),
-
-            ...(appConfigJs.html || [])
+             ...(appConfigJs.html || [])
                 .map((htmlConfig) => new HtmlWebpackPlugin(
                     Object.assign(
                         {
@@ -267,7 +243,33 @@ module.exports = (webpackEnv) => {
                             }
                             : undefined
                     )
-                ))
+                )),
+
+            hasSW && new WorkboxPlugin.InjectManifest({
+                swSrc: paths.appSW,
+            }),
+
+            isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
+
+            isEnvProduction && new MiniCssExtractPlugin({
+                filename: 'static/css/[name].[contenthash:8].css',
+                chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+            }),
+
+            new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+
+            new webpack.DefinePlugin(env.stringified),
+
+            new CopyPlugin(appConfigJs.copy),
+
+            new ManifestPlugin({
+                fileName: 'assets-manifest.json',
+                publicPath: publicPath,
+            }),
+
+            appConfigJs.manifestJson && new WebpackPwaManifest(
+                appConfigJs.manifestJson
+            ),
         ].filter(Boolean),
         optimization: {
             minimize: isEnvProduction,
