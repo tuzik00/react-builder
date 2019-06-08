@@ -43,11 +43,11 @@ module.exports = (webpackEnv) => {
         output: {
             path: paths.appBuild,
             filename: isEnvProduction
-                ? 'static/js/[name].[contenthash:8].js'
-                : 'static/js/[name].js',
+                ? 'js/[name].[contenthash:8].js'
+                : 'js/[name].js',
             chunkFilename: isEnvProduction
-                ? 'static/js/[name].[contenthash:8].bundle.js'
-                : 'static/js/[name].bundle.js',
+                ? 'js/[name].[contenthash:8].bundle.js'
+                : 'js/[name].bundle.js',
             publicPath: publicPath,
         },
         resolve: {
@@ -127,7 +127,7 @@ module.exports = (webpackEnv) => {
                     options: {
                         limit: 10000,
                         name: '[name].[ext]',
-                        outputPath: 'static/media/'
+                        outputPath: 'media/'
                     }
                 },
                 {
@@ -142,7 +142,7 @@ module.exports = (webpackEnv) => {
                             options: {
                                 svgo: require('./svgoConfig'),
                                 name: '[name].[ext]',
-                                outputPath: 'static/media/',
+                                outputPath: 'media/',
                             }
                         }
                     ]
@@ -154,7 +154,7 @@ module.exports = (webpackEnv) => {
                         options: {
                             limit: 10000,
                             name: '[name].[ext]',
-                            outputPath: 'static/fonts/',
+                            outputPath: 'fonts/',
                         }
                     }]
                 },
@@ -164,7 +164,7 @@ module.exports = (webpackEnv) => {
                         loader: require.resolve('file-loader'),
                         options: {
                             name: '[name].[ext]',
-                            outputPath: 'static/fonts/'
+                            outputPath: 'fonts/'
                         }
                     }]
                 },
@@ -219,7 +219,7 @@ module.exports = (webpackEnv) => {
             ]
         },
         plugins: [
-             ...(appConfigJs.html || [])
+            ...(appConfigJs.html || [])
                 .map((htmlConfig) => new HtmlWebpackPlugin(
                     Object.assign(
                         {
@@ -248,8 +248,8 @@ module.exports = (webpackEnv) => {
             isEnvDevelopment && new webpack.HotModuleReplacementPlugin(),
 
             isEnvProduction && new MiniCssExtractPlugin({
-                filename: 'static/css/[name].[contenthash:8].css',
-                chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
+                filename: 'css/[name].[contenthash:8].css',
+                chunkFilename: 'css/[name].[contenthash:8].chunk.css',
             }),
 
             new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
