@@ -56,7 +56,7 @@ module.exports = (webpackEnv) => {
                 paths.appNodeModules,
                 paths.appSrc
             ],
-            extensions: ['.js', '.json', '.jsx', '.styl'],
+            extensions: ['.js', '.json', '.jsx', '.styl', 'css'],
         },
         module: {
             strictExportPresence: true,
